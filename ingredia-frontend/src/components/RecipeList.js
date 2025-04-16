@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import RecipeCard from './RecipeCard';
 import RecipeFilter from './RecipeFilter';
 import { UserButton, useUser } from "@clerk/clerk-react";
-import Sidebar from "./Sidebar/Sidebar";
 
 
 const RecipeList = ({ recipes, onFilterChange }) => {
@@ -35,7 +34,7 @@ const RecipeList = ({ recipes, onFilterChange }) => {
 
   return (
     <div>
-      
+
       <UserButton />
       <h1>Welcome {user.lastName}</h1>
       <RecipeFilter filters={filters} onFilterChange={handleFilterChange} />
