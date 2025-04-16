@@ -36,3 +36,23 @@
   align-items: center;
   padding: 20px;
 }
+
+/* Main layout container */
+.main-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* Full viewport height */
+}
+
+/* Sidebar styling */
+.MuiDrawer-root {
+  flex-shrink: 0;
+}
+
+/* Content area styling */
+.content {
+  flex: 1; /* Take up the remaining space */
+  padding: 16px; /* Add some padding for spacing */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  background-color: #f9f9f9; /* Optional: Light background for contrast */
+}
