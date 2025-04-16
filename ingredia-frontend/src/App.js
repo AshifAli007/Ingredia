@@ -6,7 +6,7 @@ import RecipeList from './components/RecipeList';
 import RecipeDetails from './components/RecipeDetails';
 import SavedRecipes from './components/SavedRecipes';
 import ShoppingList from './components/ShoppingList';
-import { SignedIn, SignedOut, SignIn } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignIn, SignUp } from "@clerk/clerk-react";
 import img1 from './Assets/Img/img1.jpeg';
 import { getRecipes, getFilteredRecipes } from './api';
 import './App.css'
@@ -42,7 +42,16 @@ function App() {
               <img src={img1} alt="Welcome" className="welcome-image" />
             </div>
             <div className="signin-container">
-              <SignIn routing="hash" />
+              <Routes>
+                <Route
+                  path="/"
+                  element={<SignIn routing="hash" signUpUrl="/sign-up" />}
+                />
+                <Route
+                  path="/sign-up"
+                  element={<SignUp routing="hash" signInUrl="/" />}
+                />
+              </Routes>
             </div>
           </div>
         </SignedOut>
