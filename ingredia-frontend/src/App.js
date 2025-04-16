@@ -6,9 +6,8 @@ import RecipeList from './components/RecipeList';
 import RecipeDetails from './components/RecipeDetails';
 import SavedRecipes from './components/SavedRecipes';
 import ShoppingList from './components/ShoppingList';
-import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignIn } from "@clerk/clerk-react";
 import img1 from './Assets/Img/img1.jpeg';
-import Auth from './components/Auth';
 import { getRecipes, getFilteredRecipes } from './api';
 import './App.css'
 
