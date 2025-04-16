@@ -1,0 +1,38 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.signed-out-container {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  width: 100%;   /* Full width */
+  background-color: #f9f9f9; /* Optional: Add a background color */
+}
+
+.image-container {
+  flex: 3; /* 60% of the width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eaeaea; /* Optional: Add a background color */
+}
+
+.welcome-image {
+  width: 100%; /* Ensure the image scales properly */
+  height: 100%; /* Ensure the image scales properly */
+  object-fit: cover; /* Maintain aspect ratio */
+}
+
+.signin-container {
+  flex: 2; /* 40% of the width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
