@@ -1,0 +1,77 @@
+{
+    "pantry_staples": [
+      "All-purpose flour",
+      "Granulated sugar",
+      "Brown sugar",
+      "Baking powder",
+      "Baking soda",
+      "Cornstarch",
+      "Salt",
+      "Black pepper",
+      "Olive oil",
+      "Vegetable oil",
+      "Vinegar",
+      "Honey",
+      "Soy sauce",
+      "Worcestershire sauce",
+      "Vanilla extract"
+    ],
+    "canned_and_jarred_goods": [
+      "Canned tomatoes",
+      "Tomato paste",
+      "Canned black beans",
+      "Canned chickpeas",
+      "Canned kidney beans",
+      "Canned tuna",
+      "Chicken broth",
+      "Vegetable broth",
+      "Peanut butter",
+      "Salsa"
+    ],
+    "grains_and_dry_goods": [
+      "White rice",
+      "Brown rice",
+      "Spaghetti",
+      "Penne pasta",
+      "Rolled oats",
+      "Bread crumbs",
+      "Lentils",
+      "Quinoa"
+    ],
+    "dairy_and_refrigerated_items": [
+      "Milk",
+      "Butter",
+      "Eggs",
+      "Cheddar cheese",
+      "Mozzarella cheese",
+      "Parmesan cheese",
+      "Yogurt"
+    ],
+    "proteins": [
+      "Chicken breasts",
+      "Ground beef",
+      "Bacon",
+      "Tofu"
+    ],
+    "fresh_produce": [
+      "Onions",
+      "Garlic",
+      "Carrots",
+      "Potatoes",
+      "Bell peppers",
+      "Tomatoes",
+      "Spinach",
+      "Lettuce"
+    ],
+    "herbs_and_spices": [
+      "Basil",
+      "Oregano",
+      "Thyme",
+      "Cinnamon",
+      "Paprika",
+      "Cumin",
+      "Chili powder",
+      "Bay leaves"
+    ]
+  }
+  
