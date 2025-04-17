@@ -11,6 +11,7 @@ import './App.css'; // Ensure this file contains the necessary styles
 import Sidebar from "./components/Sidebar/Sidebar";
 import Ingredients from "./components/Ingredients/Ingredients";
 import BrowseRecipe from "./components/BrowseRecipe/BrowseRecipe";
+import Recipe from "./components/Recipe/Recipe";
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -62,7 +63,7 @@ function App() {
                 <Route exact path="/" Component={() => <RecipeList recipes={filteredRecipes} onFilterChange={handleFilterChange} />} />
                 <Route path="/ingredients" Component={Ingredients} />
                 <Route path="browse-recipe" Component={BrowseRecipe} />
-                <Route path="/recipe/:id" Component={RecipeDetails} />
+                <Route path="/recipe/:id" Component={Recipe} />
                 <Route path="/saved-recipes" Component={SavedRecipes} />
                 <Route path="/shopping-list" Component={ShoppingList} />
               </Routes>
