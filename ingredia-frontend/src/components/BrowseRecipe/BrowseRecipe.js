@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useUser } from '@clerk/clerk-react'; // Import Clerk's useUser hook
-import { Card, CardContent, CardMedia, Typography, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
+import { useUser } from '@clerk/clerk-react';
+import { Card, CardContent, CardMedia, Typography, Grid, IconButton } from '@mui/material';
+import { Favorite, FavoriteBorder } from '@mui/icons-material'; // Import heart icons
+import { useNavigate } from 'react-router-dom';
 
 const BrowseRecipe = () => {
-    const { user } = useUser(); // Get the current user
-    const userId = user?.id; // Retrieve the userId from Clerk
+    const { user } = useUser();
+    const userId = user?.id;
 
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate(); // Initialize navigate
+    const [savedRecipes, setSavedRecipes] = useState(() => {
+        // Retrieve saved recipes from localStorage
+        return JSON.parse(localStorage.getItem(`savedRecipes_${userId}`)) || [];
+    });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (!userId) return; // Ensure userId is available
+        if (!userId) return;
 
-        // Get ingredients from localStorage for the current user
         const ingredients = JSON.parse(localStorage.getItem(`ingredients_${userId}`)) || [];
 
         if (ingredients.length > 0) {
-            // Call Spoonacular API
             const fetchRecipes = async () => {
                 try {
                     const response = await axios.get(
@@ -30,8 +34,8 @@ const BrowseRecipe = () => {
                                 ranking: 1,
                                 ignorePantry: true,
                                 sort: "max-used-ingredients",
-                                number: 10, // Number of recipes to fetch
-                                apiKey: 'dda4f0b377a04cec9f8471c5ec912e4d', // Replace with your API key
+                                number: 10,
+                                apiKey: 'dda4f0b377a04cec9f8471c5ec912e4d',
                             },
                         }
                     );
@@ -50,7 +54,20 @@ const BrowseRecipe = () => {
     }, [userId]);
 
     const handleCardClick = (id) => {
-        navigate(`/recipe/${id}`); // Redirect to the recipe details page
+        navigate(`/recipe/${id}`);
+    };
+
+    const toggleSaveRecipe = (recipe) => {
+        const updatedSavedRecipes = savedRecipes.some((saved) => saved.id === recipe.id)
+            ? savedRecipes.filter((saved) => saved.id !== recipe.id) // Remove if already saved
+            : [...savedRecipes, recipe]; // Add if not saved
+
+        setSavedRecipes(updatedSavedRecipes);
+        localStorage.setItem(`savedRecipes_${userId}`, JSON.stringify(updatedSavedRecipes)); // Save to localStorage
+    };
+
+    const isRecipeSaved = (id) => {
+        return savedRecipes.some((saved) => saved.id === id);
     };
 
     return (
@@ -66,13 +83,13 @@ const BrowseRecipe = () => {
                         <Grid item xs={12} key={recipe.id}>
                             <Card
                                 style={{ display: 'flex', flexDirection: 'row', marginBottom: '20px', cursor: 'pointer' }}
-                                onClick={() => handleCardClick(recipe.id)} // Add click handler
                             >
                                 <CardMedia
                                     component="img"
                                     style={{ width: '200px', height: '150px', objectFit: 'cover' }}
                                     image={recipe.image}
                                     alt={recipe.title}
+                                    onClick={() => handleCardClick(recipe.id)} // Navigate on image click
                                 />
                                 <CardContent style={{ flex: 1 }}>
                                     <Typography variant="h6" component="div">
@@ -88,6 +105,16 @@ const BrowseRecipe = () => {
                                         <strong>Time to Cook:</strong> {recipe.readyInMinutes} mins
                                     </Typography>
                                 </CardContent>
+                                <IconButton
+                                    style={{ alignSelf: 'center', marginRight: '10px' }}
+                                    onClick={() => toggleSaveRecipe(recipe)}
+                                >
+                                    {isRecipeSaved(recipe.id) ? (
+                                        <Favorite style={{ color: 'red' }} />
+                                    ) : (
+                                        <FavoriteBorder />
+                                    )}
+                                </IconButton>
                             </Card>
                         </Grid>
                     ))}
