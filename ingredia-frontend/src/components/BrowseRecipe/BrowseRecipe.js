@@ -83,13 +83,13 @@ const BrowseRecipe = () => {
                         <Grid item xs={12} key={recipe.id}>
                             <Card
                                 style={{ display: 'flex', flexDirection: 'row', marginBottom: '20px', cursor: 'pointer' }}
+                                onClick={() => handleCardClick(recipe.id)} // Navigate on card click
                             >
                                 <CardMedia
                                     component="img"
                                     style={{ width: '200px', height: '150px', objectFit: 'cover' }}
                                     image={recipe.image}
                                     alt={recipe.title}
-                                    onClick={() => handleCardClick(recipe.id)} // Navigate on image click
                                 />
                                 <CardContent style={{ flex: 1 }}>
                                     <Typography variant="h6" component="div">
@@ -107,7 +107,10 @@ const BrowseRecipe = () => {
                                 </CardContent>
                                 <IconButton
                                     style={{ alignSelf: 'center', marginRight: '10px' }}
-                                    onClick={() => toggleSaveRecipe(recipe)}
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevent navigation when clicking the save button
+                                        toggleSaveRecipe(recipe);
+                                    }}
                                 >
                                     {isRecipeSaved(recipe.id) ? (
                                         <Favorite style={{ color: 'red' }} />
