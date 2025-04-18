@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Box, Typography, Card, CardContent, List, ListItem, ListItemText } from '@mui/material';
+import Rating from '../Rating/Rating';
 
 const Recipe = () => {
     const { id } = useParams(); // Extract the recipe ID from the URL
@@ -103,7 +104,9 @@ const Recipe = () => {
                     </Card>
                 </Box>
             </Box>
+            <Rating recipeId={id} />
         </Box>
+
     );
 };
 
