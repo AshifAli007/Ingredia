@@ -61,7 +61,7 @@ const Ingredients = () => {
                     params: {
                         query,
                         number: 10, // Limit results to 10
-                        apiKey: 'dda4f0b377a04cec9f8471c5ec912e4d', // Replace with your API key
+                        apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY, // Replace with your API key
                     },
                 }
             );
@@ -70,7 +70,15 @@ const Ingredients = () => {
             console.error('Error fetching ingredients from Spoonacular API:', error);
         }
     };
+    const handleRemoveIngredient = (ingredient) => {
+        setSelectedIngredients((prev) => prev.filter((item) => item !== ingredient));
 
+        // Update localStorage
+        if (userId) {
+            const updatedIngredients = selectedIngredients.filter((item) => item !== ingredient);
+            localStorage.setItem(`ingredients_${userId}`, JSON.stringify(updatedIngredients));
+        }
+    };
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value); // Update the search term
     };
@@ -178,6 +186,16 @@ const Ingredients = () => {
                                 <CardContent>
                                     <Typography variant="body1">{ingredient}</Typography>
                                 </CardContent>
+                                <CardActions>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        color="secondary"
+                                        onClick={() => handleRemoveIngredient(ingredient)}
+                                    >
+                                        Remove
+                                    </Button>
+                                </CardActions>
                             </Card>
                         </Grid>
                     ))}
