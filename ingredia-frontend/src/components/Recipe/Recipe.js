@@ -16,7 +16,7 @@ const Recipe = () => {
                     `https://api.spoonacular.com/recipes/${id}/information`,
                     {
                         params: {
-                            apiKey: 'dda4f0b377a04cec9f8471c5ec912e4d', // Replace with your API key
+                            apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY, // Replace with your API key
                         },
                     }
                 );
