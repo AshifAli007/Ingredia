@@ -16,6 +16,18 @@ const DIET_OPTIONS = [
     'Primal', 'Low FODMAP', 'Whole30'
 ];
 
+const TIME_OPTIONS = [
+    { label: 'Ready in < 5 min', value: 'under 5' },
+    { label: 'Ready in < 15 min', value: 'under 15' },
+    { label: 'Ready in < 30 minutes', value: 'under 30' },
+    { label: 'Ready in < 60 minutes', value: 'under 60' },
+    { label: 'Ready in 1-2 hours', value: '1-2 hours' },
+    { label: 'Ready in 2-3 hours', value: '2-3 hours' },
+    { label: 'Ready in 4+ hours', value: '4+ hours' },
+];
+
+
+
 const BrowseRecipe = () => {
     const { user } = useUser();
     const userId = user?.id;
@@ -105,29 +117,38 @@ const BrowseRecipe = () => {
     const applyFilters = () => {
         let filtered = recipes;
 
+        // Diet filter
         if (filters.diet.length > 0) {
             filtered = filtered.filter((recipe) =>
                 filters.diet.every((diet) => recipe.diets?.includes(diet.toLowerCase()))
             );
         }
 
+        // Cuisine filter
         if (filters.cuisine.length > 0) {
             filtered = filtered.filter((recipe) =>
                 recipe.cuisines.some((cuisine) => filters.cuisine.includes(cuisine))
             );
         }
 
+        // Time filter
         if (filters.time.length > 0) {
             filtered = filtered.filter((recipe) =>
                 filters.time.some((time) => {
-                    if (time === 'under 15') return recipe.readyInMinutes <= 15;
-                    if (time === '15-30') return recipe.readyInMinutes > 15 && recipe.readyInMinutes <= 30;
-                    if (time === '30+') return recipe.readyInMinutes > 30;
+                    const minutes = recipe.readyInMinutes;
+                    if (time === 'under 5') return minutes <= 5;
+                    if (time === 'under 15') return minutes <= 15;
+                    if (time === 'under 30') return minutes <= 30;
+                    if (time === 'under 60') return minutes <= 60;
+                    if (time === '1-2 hours') return minutes > 60 && minutes <= 120;
+                    if (time === '2-3 hours') return minutes > 120 && minutes <= 180;
+                    if (time === '4+ hours') return minutes > 240;
                     return false;
                 })
             );
         }
 
+        // Calories filter
         if (filters.calories.length > 0) {
             filtered = filtered.filter((recipe) =>
                 filters.calories.some((range) => {
@@ -167,7 +188,7 @@ const BrowseRecipe = () => {
                 <Button variant="outlined" onClick={() => handleFilterClick('calories')}>Calories</Button>
             </div>
 
-            {/* Drawer for Filters */}
+
             <Drawer anchor="bottom" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <div style={{ padding: '20px' }}>
                     <Typography variant="h6">{activeFilter} Filters</Typography>
@@ -183,6 +204,13 @@ const BrowseRecipe = () => {
                             key={cuisine}
                             control={<Checkbox onChange={() => handleFilterChange('cuisine', cuisine)} />}
                             label={cuisine}
+                        />
+                    ))}
+                    {activeFilter === 'time' && TIME_OPTIONS.map((time) => (
+                        <FormControlLabel
+                            key={time.value}
+                            control={<Checkbox onChange={() => handleFilterChange('time', time.value)} />}
+                            label={time.label}
                         />
                     ))}
                     <Button variant="contained" onClick={applyFilters} style={{ marginTop: '20px' }}>
