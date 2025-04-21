@@ -1,55 +1,148 @@
-// RecipeList.js
 import React, { useState } from "react";
-import RecipeCard from './RecipeCard';
-import RecipeFilter from './RecipeFilter';
 import { UserButton, useUser } from "@clerk/clerk-react";
+import { TextField, Button, Box, Typography, Grid, Card, CardContent, CardMedia, Checkbox, IconButton } from "@mui/material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
+const RecipeList = () => {
+  const { user } = useUser();
+  const userId = user?.id;
+  const navigate = useNavigate();
 
-const RecipeList = ({ recipes, onFilterChange }) => {
-  const [ingredientSearch, setIngredientSearch] = useState('');
-  const { user } = useUser()
-  const [filters, setFilters] = useState({
-    dietary: '',
-    cuisine: '',
-    prepTime: '',
-    difficulty: '',
-    calories: [0, 1000],
-  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [recipes, setRecipes] = useState([]);
+  const [shoppingList, setShoppingList] = useState([]);
+  const [userItems, setUserItems] = useState(["salt", "sugar"]); // Example of items user already has
+  const [selectedRecipes, setSelectedRecipes] = useState([]);
+  const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem(`favorites_${userId}`)) || []);
 
-  const handleSearchChange = (e) => {
-    setIngredientSearch(e.target.value);
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
+        params: {
+          query: searchQuery,
+          apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY,
+        },
+      });
+      setRecipes(response.data.results);
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
   };
 
-  const handleFilterChange = (filterType, value) => {
-    setFilters(prev => {
-      const updatedFilters = { ...prev, [filterType]: value };
-      onFilterChange(updatedFilters); // Pass updated filters to parent
-      return updatedFilters;
-    });
+  const handleAddToShoppingList = async () => {
+    try {
+      const ingredientPromises = selectedRecipes.map((recipeId) =>
+        axios.get(`https://api.spoonacular.com/recipes/${recipeId}/ingredientWidget.json`, {
+          params: {
+            apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY,
+          },
+        })
+      );
+
+      const responses = await Promise.all(ingredientPromises);
+      const allIngredients = responses.flatMap((response) =>
+        response.data.ingredients.map((ingredient) => ingredient.name)
+      );
+
+      const filteredIngredients = allIngredients.filter((item) => !userItems.includes(item));
+      setShoppingList((prevList) => [...new Set([...prevList, ...filteredIngredients])]);
+    } catch (error) {
+      console.error("Error fetching ingredients:", error);
+    }
   };
 
-  const filteredRecipes = recipes.filter(recipe =>
-    recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(ingredientSearch.toLowerCase()))
-  );
+  const toggleFavorite = (recipe) => {
+    const updatedFavorites = favorites.some((fav) => fav.id === recipe.id)
+      ? favorites.filter((fav) => fav.id !== recipe.id)
+      : [...favorites, recipe];
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem(`favorites_${userId}`, JSON.stringify(updatedFavorites));
+  };
+
+  const isFavorite = (id) => favorites.some((fav) => fav.id === id);
+
+  const handleCardClick = (id) => {
+    navigate(`/recipe/${id}`);
+  };
+
+  const handleSelectRecipe = (id) => {
+    setSelectedRecipes((prev) =>
+      prev.includes(id) ? prev.filter((recipeId) => recipeId !== id) : [...prev, id]
+    );
+  };
 
   return (
-    <div>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, padding: 2 }}>
+      {/* Top Bar */}
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <TextField
+          label="Search Recipes"
+          variant="outlined"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{ width: "70%" }}
+        />
+        <Button variant="contained" onClick={handleSearch}>
+          Search
+        </Button>
+        <UserButton />
+      </Box>
 
-      <UserButton />
-      <h1>Welcome {user.lastName}</h1>
-      <RecipeFilter filters={filters} onFilterChange={handleFilterChange} />
-      <input
-        type="text"
-        placeholder="Search by ingredients..."
-        value={ingredientSearch}
-        onChange={handleSearchChange}
-      />
-      <div className="recipe-list">
-        {filteredRecipes.map(recipe => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
-        ))}
-      </div>
-    </div>
+      {/* Recipe Results */}
+      <Box>
+        <Typography variant="h6">Recipes</Typography>
+        <Grid container spacing={3}>
+          {recipes.map((recipe) => (
+            <Grid item xs={12} sm={6} md={4} key={recipe.id}>
+              <Card sx={{ display: "flex", flexDirection: "column", cursor: "pointer" }}>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={recipe.image}
+                  alt={recipe.title}
+                  onClick={() => handleCardClick(recipe.id)}
+                />
+                <CardContent>
+                  <Typography variant="h6">{recipe.title}</Typography>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 1 }}>
+                    <Checkbox
+                      checked={selectedRecipes.includes(recipe.id)}
+                      onChange={() => handleSelectRecipe(recipe.id)}
+                    />
+                    <IconButton onClick={() => toggleFavorite(recipe)}>
+                      {isFavorite(recipe.id) ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder />}
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Shopping List */}
+      <Box>
+        <Typography variant="h6">Shopping List</Typography>
+        <Button
+          variant="contained"
+          onClick={handleAddToShoppingList}
+          disabled={selectedRecipes.length === 0}
+          sx={{ marginBottom: 2 }}
+        >
+          Generate Shopping List
+        </Button>
+        <Box>
+          {shoppingList.map((item, index) => (
+            <Typography key={index} variant="body1">
+              {item}
+            </Typography>
+          ))}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
