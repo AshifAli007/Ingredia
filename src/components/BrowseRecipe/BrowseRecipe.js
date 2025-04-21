@@ -26,6 +26,11 @@ const TIME_OPTIONS = [
     { label: 'Ready in 4+ hours', value: '4+ hours' },
 ];
 
+const CALORIE_OPTIONS = [
+    { label: 'Under 200 kcal', value: 'under 200' },
+    { label: '200-500 kcal', value: '200-500' },
+    { label: 'Over 500 kcal', value: 'over 500' },
+];
 
 
 const BrowseRecipe = () => {
@@ -70,12 +75,16 @@ const BrowseRecipe = () => {
                                 `https://api.spoonacular.com/recipes/${recipe.id}/information`,
                                 {
                                     params: {
-                                        includeNutrition: false,
+                                        includeNutrition: true,
                                         apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY,
                                     },
                                 }
                             );
-                            return { ...recipe, ...details.data }; // Merge basic and detailed data
+                            return {
+                                ...recipe,
+                                ...details.data,
+                                nutrition: details.data.nutrition?.nutrients.find(n => n.name === 'Calories') || { amount: 0 }
+                            }; // Merge basic and detailed data
                         })
                     );
 
@@ -152,10 +161,10 @@ const BrowseRecipe = () => {
         if (filters.calories.length > 0) {
             filtered = filtered.filter((recipe) =>
                 filters.calories.some((range) => {
-                    const calories = recipe.nutrition?.calories || 0;
+                    const calories = recipe.nutrition?.amount || 0;
                     if (range === 'under 200') return calories <= 200;
                     if (range === '200-500') return calories > 200 && calories <= 500;
-                    if (range === '500+') return calories > 500;
+                    if (range === 'over 500') return calories > 500;
                     return false;
                 })
             );
@@ -211,6 +220,13 @@ const BrowseRecipe = () => {
                             key={time.value}
                             control={<Checkbox onChange={() => handleFilterChange('time', time.value)} />}
                             label={time.label}
+                        />
+                    ))}
+                    {activeFilter === 'calories' && CALORIE_OPTIONS.map((calorie) => (
+                        <FormControlLabel
+                            key={calorie.value}
+                            control={<Checkbox onChange={() => handleFilterChange('calories', calorie.value)} />}
+                            label={calorie.label}
                         />
                     ))}
                     <Button variant="contained" onClick={applyFilters} style={{ marginTop: '20px' }}>
