@@ -11,6 +11,7 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import Ingredients from "./components/Ingredients/Ingredients";
 import BrowseRecipe from "./components/BrowseRecipe/BrowseRecipe";
 import Recipe from "./components/Recipe/Recipe";
+import { Widgets } from "@mui/icons-material";
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -55,7 +56,7 @@ function App() {
           </div>
         </SignedOut>
         <SignedIn>
-          <div className="main-layout">
+          <div className="main-layout" style={{ 'width': '100%' }}>
             <Sidebar />
             <div className="content">
               <Routes>
@@ -69,8 +70,8 @@ function App() {
             </div>
           </div>
         </SignedIn>
-      </div>
-    </Router>
+      </div >
+    </Router >
   );
 }
 
