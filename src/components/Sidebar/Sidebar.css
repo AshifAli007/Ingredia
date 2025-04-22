@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Anurati';
+    src: url('../../Assets/Anurati.otf') format('opentype');
+}
+
+.ingredia-text {
+    font-family: 'Anurati', sans-serif !important;
+    font-size: 1.3rem !important;
+    color: #4caf50 !important;
+}
+
+.ingredia-n {
+    font-size: 2rem; /* Adjust size as needed */
+    transform: rotate(-30deg); /* Rotate the letter */
+    display: inline-block; /* Ensure proper rotation */
+    color: orange; /* Match the color of the rest of the text */
+    margin: 3px;
+
+}
