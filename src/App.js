@@ -11,7 +11,6 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import Ingredients from "./components/Ingredients/Ingredients";
 import BrowseRecipe from "./components/BrowseRecipe/BrowseRecipe";
 import Recipe from "./components/Recipe/Recipe";
-import { Widgets } from "@mui/icons-material";
 
 function App() {
   const [recipes, setRecipes] = useState([]);

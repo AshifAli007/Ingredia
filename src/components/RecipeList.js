@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UserButton, useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { TextField, Button, Box, Typography, Grid, Card, CardContent, CardMedia, Checkbox, IconButton } from "@mui/material";
 import { Favorite, FavoriteBorder, FileCopy, Download } from "@mui/icons-material";
 import axios from "axios";
@@ -15,7 +15,7 @@ const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
-  const [userItems, setUserItems] = useState(["salt", "sugar"]); // Example of items user already has
+  const [userItems] = useState(["salt", "sugar"]); // Example of items user already has
   const [selectedRecipes, setSelectedRecipes] = useState([]);
   const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem(`favorites_${userId}`)) || []);
 

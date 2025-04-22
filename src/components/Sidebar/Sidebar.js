@@ -12,11 +12,6 @@ const Sidebar = () => {
     const { user } = useUser(); // Get user data from Clerk
     const fullName = user?.fullName || 'Guest'; // Fallback to 'Guest' if no user is logged in
 
-    const activeStyle = {
-        color: 'rgb(228, 149, 0)', // Active text color
-        borderRight: '4px solid rgb(228, 149, 0)', // Active strip on the right
-        backgroundColor: '#f5f5f5', // Slight background highlight
-    };
 
     return (
         <Drawer
