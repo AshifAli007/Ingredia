@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { Card, CardContent, CardMedia, Typography, Grid, IconButton } from '@mui/material';
-import { Favorite } from '@mui/icons-material'; // Import filled heart icon
+import { Favorite } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const SavedRecipes = () => {

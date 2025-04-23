@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import RecipeList from './components/RecipeList';
 import SavedRecipes from './components/SavedRecipes';
-import ShoppingList from './components/ShoppingList';
 import { SignedIn, SignedOut, SignIn, SignUp } from "@clerk/clerk-react";
 import img1 from './Assets/Img/img1.jpeg';
 import { getRecipes, getFilteredRecipes } from './api';
@@ -64,7 +63,6 @@ function App() {
                 <Route path="browse-recipe" Component={BrowseRecipe} />
                 <Route path="/recipe/:id" Component={Recipe} />
                 <Route path="/saved-recipes" Component={SavedRecipes} />
-                <Route path="/shopping-list" Component={ShoppingList} />
               </Routes>
             </div>
           </div>
