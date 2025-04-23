@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
-import { Card, CardContent, CardMedia, Typography, Grid, IconButton, Button, Drawer, Checkbox, FormControlLabel } from '@mui/material';
+import {
+    Card,
+    CardContent,
+    CardMedia,
+    Typography,
+    Grid,
+    IconButton,
+    Button,
+    Drawer,
+    Checkbox,
+    FormControlLabel,
+    FormControl,
+    MenuItem,
+    InputLabel,
+    Select
+} from '@mui/material';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,6 +59,9 @@ const BrowseRecipe = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [activeFilter, setActiveFilter] = useState('');
     const [filteredRecipes, setFilteredRecipes] = useState([]);
+
+    const [sortOption, setSortOption] = useState(''); // State for sorting
+
 
     const navigate = useNavigate();
 
@@ -105,6 +123,26 @@ const BrowseRecipe = () => {
 
     const handleCardClick = (id) => {
         navigate(`/recipe/${id}`);
+    };
+    const handleSortChange = (option) => {
+        setSortOption(option);
+
+        const sortedRecipes = [...filteredRecipes]; // Clone the array to avoid mutating state
+        if (option === 'caloriesLowToHigh') {
+            sortedRecipes.sort((a, b) => (a.nutrition?.amount || 0) - (b.nutrition?.amount || 0));
+        } else if (option === 'caloriesHighToLow') {
+            sortedRecipes.sort((a, b) => (b.nutrition?.amount || 0) - (a.nutrition?.amount || 0));
+        } else if (option === 'timeFastest') {
+            sortedRecipes.sort((a, b) => a.readyInMinutes - b.readyInMinutes);
+        } else if (option === 'timeSlowest') {
+            sortedRecipes.sort((a, b) => b.readyInMinutes - a.readyInMinutes);
+        } else if (option === 'healthiest') {
+            sortedRecipes.sort((a, b) => b.healthScore - a.healthScore);
+        } else if (option === 'unhealthiest') {
+            sortedRecipes.sort((a, b) => a.healthScore - b.healthScore);
+        }
+
+        setFilteredRecipes(sortedRecipes); // Update the filtered recipes
     };
 
     const toggleSaveRecipe = (recipe) => {
@@ -191,14 +229,31 @@ const BrowseRecipe = () => {
                 Discover Recipes
             </Typography>
 
-            {/* Filter Bar */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', alignItems: 'center' }}>
+                {/* Filter Buttons */}
                 <Button variant="outlined" onClick={() => handleFilterClick('diet')}>Diet</Button>
                 <Button variant="outlined" onClick={() => handleFilterClick('cuisine')}>Cuisine</Button>
                 <Button variant="outlined" onClick={() => handleFilterClick('time')}>Time</Button>
                 <Button variant="outlined" onClick={() => handleFilterClick('calories')}>Calories</Button>
-            </div>
 
+                {/* Sorting Dropdown */}
+                <FormControl style={{ minWidth: 120, marginLeft: '10px' }} size="small" variant="outlined">
+                    <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
+                    <Select
+                        id="sort-by-select"
+                        value={sortOption}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                        label="Sort By"
+                    >
+                        <MenuItem value="caloriesLowToHigh">Calories: Low to High</MenuItem>
+                        <MenuItem value="caloriesHighToLow">Calories: High to Low</MenuItem>
+                        <MenuItem value="timeFastest">Time: Fastest</MenuItem>
+                        <MenuItem value="timeSlowest">Time: Slowest</MenuItem>
+                        <MenuItem value="healthiest">Healthiest</MenuItem>
+                        <MenuItem value="unhealthiest">Unhealthiest</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
 
             <Drawer anchor="bottom" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <div style={{ padding: '20px' }}>
