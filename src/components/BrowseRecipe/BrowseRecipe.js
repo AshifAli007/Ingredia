@@ -159,8 +159,10 @@ const BrowseRecipe = () => {
 
         // Calories filter
         if (filters.calories.length > 0) {
+            console.log('here', filtered)
             filtered = filtered.filter((recipe) =>
                 filters.calories.some((range) => {
+                    console.log(recipe)
                     const calories = recipe.nutrition?.amount || 0;
                     if (range === 'under 200') return calories <= 200;
                     if (range === '200-500') return calories > 200 && calories <= 500;
@@ -256,7 +258,7 @@ const BrowseRecipe = () => {
                                         {recipe.title}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
-                                        <strong>Calories:</strong> {recipe.nutrition?.calories || 'N/A'}
+                                        <strong>Calories:</strong> {recipe.nutrition?.amount || 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
                                         <strong>Time to Cook:</strong> {recipe.readyInMinutes} mins
