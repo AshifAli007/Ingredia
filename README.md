@@ -33,10 +33,10 @@ Follow these steps to set up and run the Ingredia web app on your local machine:
    - Navigate to the API section and generate your API key.
    - Copy the API key.
 
-5. Create a `.env` file in the root directory of the project and add the following line:
+5. Create a `.env` file in the root directory of the project and add the following lines:
    ```env
    REACT_APP_CLERK_PUBLISHABLE_KEY=pk_test_cHJvcGVyLXBpcGVmaXNoLTIwLmNsZXJrLmFjY291bnRzLmRldiQ
-REACT_APP_SPOONACULAR_API_KEY=dda4f0b377a04cec9f8471c5ec912e4d
+   REACT_APP_SPOONACULAR_API_KEY=dda4f0b377a04cec9f8471c5ec912e4d
    ```
 
 6. Start the development server:
