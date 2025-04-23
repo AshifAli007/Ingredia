@@ -124,6 +124,11 @@ const BrowseRecipe = () => {
     const handleCardClick = (id) => {
         navigate(`/recipe/${id}`);
     };
+    const clearAllFilters = () => {
+        setFilters({ diet: [], cuisine: [], time: [], difficulty: [], calories: [] }); // Reset all filters
+        setFilteredRecipes(recipes); // Reset filtered recipes to show all recipes
+        setDrawerOpen(false); // Close the drawer
+    };
     const handleSortChange = (option) => {
         setSortOption(option);
 
@@ -258,36 +263,79 @@ const BrowseRecipe = () => {
             <Drawer anchor="bottom" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <div style={{ padding: '20px' }}>
                     <Typography variant="h6">{activeFilter} Filters</Typography>
+
+                    {/* Diet Filters */}
                     {activeFilter === 'diet' && DIET_OPTIONS.map((diet) => (
                         <FormControlLabel
                             key={diet}
-                            control={<Checkbox onChange={() => handleFilterChange('diet', diet)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.diet.includes(diet)} // Show selected filters
+                                    onChange={() => handleFilterChange('diet', diet)}
+                                />
+                            }
                             label={diet}
                         />
                     ))}
+
+                    {/* Cuisine Filters */}
                     {activeFilter === 'cuisine' && CUISINE_OPTIONS.map((cuisine) => (
                         <FormControlLabel
                             key={cuisine}
-                            control={<Checkbox onChange={() => handleFilterChange('cuisine', cuisine)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.cuisine.includes(cuisine)} // Show selected filters
+                                    onChange={() => handleFilterChange('cuisine', cuisine)}
+                                />
+                            }
                             label={cuisine}
                         />
                     ))}
+
+                    {/* Time Filters */}
                     {activeFilter === 'time' && TIME_OPTIONS.map((time) => (
                         <FormControlLabel
                             key={time.value}
-                            control={<Checkbox onChange={() => handleFilterChange('time', time.value)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.time.includes(time.value)} // Show selected filters
+                                    onChange={() => handleFilterChange('time', time.value)}
+                                />
+                            }
                             label={time.label}
                         />
                     ))}
+
+                    {/* Calorie Filters */}
                     {activeFilter === 'calories' && CALORIE_OPTIONS.map((calorie) => (
                         <FormControlLabel
                             key={calorie.value}
-                            control={<Checkbox onChange={() => handleFilterChange('calories', calorie.value)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.calories.includes(calorie.value)} // Show selected filters
+                                    onChange={() => handleFilterChange('calories', calorie.value)}
+                                />
+                            }
                             label={calorie.label}
                         />
                     ))}
-                    <Button variant="contained" onClick={applyFilters} style={{ marginTop: '20px' }}>
+
+                    {/* Apply Filters Button */}
+                    <Button
+                        variant="contained"
+                        onClick={applyFilters}
+                        style={{ marginTop: '20px', marginRight: '10px' }}
+                    >
                         Apply Filters
+                    </Button>
+
+                    {/* Clear All Filters Button */}
+                    <Button
+                        variant="outlined"
+                        onClick={clearAllFilters}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Clear All Filters
                     </Button>
                 </div>
             </Drawer>
