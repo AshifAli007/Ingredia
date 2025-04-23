@@ -80,7 +80,7 @@ const BrowseRecipe = () => {
                                 ingredients: ingredients.join(','),
                                 ranking: 1,
                                 ignorePantry: true,
-                                number: 2,
+                                number: 8,
                                 apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY,
                             },
                         }

@@ -25,7 +25,7 @@ const RecipeList = () => {
       try {
         const response = await axios.get(`https://api.spoonacular.com/recipes/random`, {
           params: {
-            number: 5,
+            number: 3,
             apiKey: process.env.REACT_APP_SPOONACULAR_API_KEY,
           },
         });
