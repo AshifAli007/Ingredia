@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
-import { Card, CardContent, CardMedia, Typography, Grid, IconButton, Button, Drawer, Checkbox, FormControlLabel } from '@mui/material';
+import {
+    Card,
+    CardContent,
+    CardMedia,
+    Typography,
+    Grid,
+    IconButton,
+    Button,
+    Drawer,
+    Checkbox,
+    FormControlLabel,
+    FormControl,
+    MenuItem,
+    InputLabel,
+    Select
+} from '@mui/material';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,6 +59,9 @@ const BrowseRecipe = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [activeFilter, setActiveFilter] = useState('');
     const [filteredRecipes, setFilteredRecipes] = useState([]);
+
+    const [sortOption, setSortOption] = useState(''); // State for sorting
+
 
     const navigate = useNavigate();
 
@@ -106,6 +124,31 @@ const BrowseRecipe = () => {
     const handleCardClick = (id) => {
         navigate(`/recipe/${id}`);
     };
+    const clearAllFilters = () => {
+        setFilters({ diet: [], cuisine: [], time: [], difficulty: [], calories: [] }); // Reset all filters
+        setFilteredRecipes(recipes); // Reset filtered recipes to show all recipes
+        setDrawerOpen(false); // Close the drawer
+    };
+    const handleSortChange = (option) => {
+        setSortOption(option);
+
+        const sortedRecipes = [...filteredRecipes]; // Clone the array to avoid mutating state
+        if (option === 'caloriesLowToHigh') {
+            sortedRecipes.sort((a, b) => (a.nutrition?.amount || 0) - (b.nutrition?.amount || 0));
+        } else if (option === 'caloriesHighToLow') {
+            sortedRecipes.sort((a, b) => (b.nutrition?.amount || 0) - (a.nutrition?.amount || 0));
+        } else if (option === 'timeFastest') {
+            sortedRecipes.sort((a, b) => a.readyInMinutes - b.readyInMinutes);
+        } else if (option === 'timeSlowest') {
+            sortedRecipes.sort((a, b) => b.readyInMinutes - a.readyInMinutes);
+        } else if (option === 'healthiest') {
+            sortedRecipes.sort((a, b) => b.healthScore - a.healthScore);
+        } else if (option === 'unhealthiest') {
+            sortedRecipes.sort((a, b) => a.healthScore - b.healthScore);
+        }
+
+        setFilteredRecipes(sortedRecipes); // Update the filtered recipes
+    };
 
     const toggleSaveRecipe = (recipe) => {
         const updatedSavedRecipes = savedRecipes.some((saved) => saved.id === recipe.id)
@@ -159,8 +202,10 @@ const BrowseRecipe = () => {
 
         // Calories filter
         if (filters.calories.length > 0) {
+            console.log('here', filtered)
             filtered = filtered.filter((recipe) =>
                 filters.calories.some((range) => {
+                    console.log(recipe)
                     const calories = recipe.nutrition?.amount || 0;
                     if (range === 'under 200') return calories <= 200;
                     if (range === '200-500') return calories > 200 && calories <= 500;
@@ -189,48 +234,108 @@ const BrowseRecipe = () => {
                 Discover Recipes
             </Typography>
 
-            {/* Filter Bar */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', alignItems: 'center' }}>
+                {/* Filter Buttons */}
                 <Button variant="outlined" onClick={() => handleFilterClick('diet')}>Diet</Button>
                 <Button variant="outlined" onClick={() => handleFilterClick('cuisine')}>Cuisine</Button>
                 <Button variant="outlined" onClick={() => handleFilterClick('time')}>Time</Button>
                 <Button variant="outlined" onClick={() => handleFilterClick('calories')}>Calories</Button>
-            </div>
 
+                {/* Sorting Dropdown */}
+                <FormControl style={{ minWidth: 120, marginLeft: '10px' }} size="small" variant="outlined">
+                    <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
+                    <Select
+                        id="sort-by-select"
+                        value={sortOption}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                        label="Sort By"
+                    >
+                        <MenuItem value="caloriesLowToHigh">Calories: Low to High</MenuItem>
+                        <MenuItem value="caloriesHighToLow">Calories: High to Low</MenuItem>
+                        <MenuItem value="timeFastest">Time: Fastest</MenuItem>
+                        <MenuItem value="timeSlowest">Time: Slowest</MenuItem>
+                        <MenuItem value="healthiest">Healthiest</MenuItem>
+                        <MenuItem value="unhealthiest">Unhealthiest</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
 
             <Drawer anchor="bottom" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <div style={{ padding: '20px' }}>
                     <Typography variant="h6">{activeFilter} Filters</Typography>
+
+                    {/* Diet Filters */}
                     {activeFilter === 'diet' && DIET_OPTIONS.map((diet) => (
                         <FormControlLabel
                             key={diet}
-                            control={<Checkbox onChange={() => handleFilterChange('diet', diet)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.diet.includes(diet)} // Show selected filters
+                                    onChange={() => handleFilterChange('diet', diet)}
+                                />
+                            }
                             label={diet}
                         />
                     ))}
+
+                    {/* Cuisine Filters */}
                     {activeFilter === 'cuisine' && CUISINE_OPTIONS.map((cuisine) => (
                         <FormControlLabel
                             key={cuisine}
-                            control={<Checkbox onChange={() => handleFilterChange('cuisine', cuisine)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.cuisine.includes(cuisine)} // Show selected filters
+                                    onChange={() => handleFilterChange('cuisine', cuisine)}
+                                />
+                            }
                             label={cuisine}
                         />
                     ))}
+
+                    {/* Time Filters */}
                     {activeFilter === 'time' && TIME_OPTIONS.map((time) => (
                         <FormControlLabel
                             key={time.value}
-                            control={<Checkbox onChange={() => handleFilterChange('time', time.value)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.time.includes(time.value)} // Show selected filters
+                                    onChange={() => handleFilterChange('time', time.value)}
+                                />
+                            }
                             label={time.label}
                         />
                     ))}
+
+                    {/* Calorie Filters */}
                     {activeFilter === 'calories' && CALORIE_OPTIONS.map((calorie) => (
                         <FormControlLabel
                             key={calorie.value}
-                            control={<Checkbox onChange={() => handleFilterChange('calories', calorie.value)} />}
+                            control={
+                                <Checkbox
+                                    checked={filters.calories.includes(calorie.value)} // Show selected filters
+                                    onChange={() => handleFilterChange('calories', calorie.value)}
+                                />
+                            }
                             label={calorie.label}
                         />
                     ))}
-                    <Button variant="contained" onClick={applyFilters} style={{ marginTop: '20px' }}>
+
+                    {/* Apply Filters Button */}
+                    <Button
+                        variant="contained"
+                        onClick={applyFilters}
+                        style={{ marginTop: '20px', marginRight: '10px' }}
+                    >
                         Apply Filters
+                    </Button>
+
+                    {/* Clear All Filters Button */}
+                    <Button
+                        variant="outlined"
+                        onClick={clearAllFilters}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Clear All Filters
                     </Button>
                 </div>
             </Drawer>
@@ -256,7 +361,7 @@ const BrowseRecipe = () => {
                                         {recipe.title}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
-                                        <strong>Calories:</strong> {recipe.nutrition?.calories || 'N/A'}
+                                        <strong>Calories:</strong> {recipe.nutrition?.amount || 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" style={{ marginTop: '10px' }}>
                                         <strong>Time to Cook:</strong> {recipe.readyInMinutes} mins
